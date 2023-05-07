@@ -18,15 +18,6 @@ def extract(partId, rows):
           (poi_cbg, visitor_cbg, date_start, date_end) = (row[18],row[19][1:-1],row[12][0:7],row[13][0:7]) 
           yield (poi_cbg, visitor_cbg, date_start, date_end)
 
-def centroid(partId, rows):
-    if partId == 0:
-        next(rows)
-    reader = csv.reader(rows)
-    for row in reader:
-      (poi_cbg, latitude, longitude) = (row[0], float(row[1]), float(row[2]))
-      (x_axis,y_axis) = proj(latitude, longitude)
-      yield (poi_cbg, x_axis, y_axis)
-
 def merge(x, y):
     z = x.copy()   
     z.update(y)    
