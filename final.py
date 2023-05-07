@@ -53,6 +53,7 @@ if __name__=="__main__":
 
   A = sc.textFile(WEEKPATTERN_DF, use_unicode=True)
 
+  date_range = ['2019-03', '2019-10', '2020-03', '2020-10']
   B = A.mapPartitionsWithIndex(extract)\
        .filter(lambda x: x[2] in date_range or x[3] in date_range)\
        .map(lambda x:(x[0],x[1].split(','),x[2]) if x[2] in date_range else(x[0],x[1].split(','),x[3]))
