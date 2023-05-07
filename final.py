@@ -41,19 +41,20 @@ if __name__=="__main__":
   SUPERMARKET_DF = pd.read_csv('nyc_supermarkets.csv',encoding="utf-8")
   CENTROIDS_DF = pd.read_csv('nyc_cbg_centroids.csv',encoding="utf-8")
 
-  safegraph_placekey = spark.createDataFrame(item).rdd
-  safegraph_placekey = sc.textFile(SUPERMARKET_DF, use_unicode=True)\
-                         .filter(lambda x: not x.startswith('place_id'))\
-                         .map(lambda x: {x.split(',')[-2]})\
-                         .reduce(lambda x,y: x|y)
+  safegraph_placekey = spark.createDataFrame(SUPERMARKET_DF)\
+                            .rdd\
+                            .filter(lambda x: not x.startswith('place_id'))\
+                            .map(lambda x: {x.split(',')[-2]})\
+                            .reduce(lambda x,y: x|y)
 
   proj = pyproj.Proj(init='EPSG:2263', preserve_units=False)
   centroid = sc.textFile(CENTROIDS_DF,use_unicode=True)\
                .mapPartitionsWithIndex(centroid)\
                .map(lambda x: (x[0],(x[1]/1609.344,x[2]/1609.344)))
-
-  A = sc.textFile(WEEKPATTERN_DF, use_unicode=True)
-
+  
+  A = spark.createDataFrame(WEEKPATTERN_DF)\
+           .rdd
+    
   B = A.mapPartitionsWithIndex(extract)\
        .filter(lambda x: x[2] in date_range or x[3] in date_range)\
        .map(lambda x:(x[0],x[1].split(','),x[2]) if x[2] in date_range else(x[0],x[1].split(','),x[3]))
