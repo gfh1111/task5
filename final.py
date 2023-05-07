@@ -41,6 +41,7 @@ if __name__=="__main__":
   SUPERMARKET_DF = pd.read_csv('nyc_supermarkets.csv',encoding="utf-8")
   CENTROIDS_DF = pd.read_csv('nyc_cbg_centroids.csv',encoding="utf-8")
 
+  safegraph_placekey = spark.createDataFrame(item).rdd
   safegraph_placekey = sc.textFile(SUPERMARKET_DF, use_unicode=True)\
                          .filter(lambda x: not x.startswith('place_id'))\
                          .map(lambda x: {x.split(',')[-2]})\
