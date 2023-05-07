@@ -18,7 +18,6 @@ def extract(partId, rows):
           (poi_cbg, visitor_cbg, date_start, date_end) = (row[18],row[19][1:-1],row[12][0:7],row[13][0:7]) 
           yield (poi_cbg, visitor_cbg, date_start, date_end)
 
-proj = pyproj.Proj(init='EPSG:2263', preserve_units=False)
 def centroid(partId, rows):
     if partId == 0:
         next(rows)
@@ -43,18 +42,17 @@ if __name__=="__main__":
 
   safegraph_placekey = spark.createDataFrame(SUPERMARKET_DF)\
                             .rdd\
-                            .filter(lambda x: not x.startswith('place_id'))\
-                            .map(lambda x: {x.split(',')[-2]})\
+                            .map(lambda x: {x[-2]})\
                             .reduce(lambda x,y: x|y)
 
   proj = pyproj.Proj(init='EPSG:2263', preserve_units=False)
-  centroid = sc.textFile(CENTROIDS_DF,use_unicode=True)\
-               .mapPartitionsWithIndex(centroid)\
-               .map(lambda x: (x[0],(x[1]/1609.344,x[2]/1609.344)))
-  
-  A = spark.createDataFrame(WEEKPATTERN_DF)\
-           .rdd
-    
+  centroid = spark.createDataFrame(CENTROIDS_DF)\
+                  .rdd\
+                  .map(lambda x: (x[0],proj(x[1],x[2])))\
+                  .map(lambda x: (str(x[0]),(x[1][0]/1609.344,x[1][1]/1609.344)))
+
+  A = sc.textFile(WEEKPATTERN_DF, use_unicode=True)
+
   B = A.mapPartitionsWithIndex(extract)\
        .filter(lambda x: x[2] in date_range or x[3] in date_range)\
        .map(lambda x:(x[0],x[1].split(','),x[2]) if x[2] in date_range else(x[0],x[1].split(','),x[3]))
