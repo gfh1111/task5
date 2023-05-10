@@ -3,7 +3,6 @@ import pyspark
 import pyproj
 import pandas as pd
 import sys
-
 from pyspark.sql import SparkSession
 sc = pyspark.SparkContext.getOrCreate()
 spark = SparkSession(sc)
