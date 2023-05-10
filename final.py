@@ -39,7 +39,7 @@ if __name__=="__main__":
   proj = pyproj.Proj(init='EPSG:2263', preserve_units=False)
   centroid = spark.createDataFrame(CENTROIDS_DF)\
                   .rdd\
-                  .map(lambda x: (x[0],proj(x[1],x[2])))\
+                  .map(lambda x: (x[0],proj(x[2],x[1])))\
                   .map(lambda x: (str(x[0]),(x[1][0]/1609.344,x[1][1]/1609.344)))
 
   A = sc.textFile(WEEKPATTERN_DF, use_unicode=True)
