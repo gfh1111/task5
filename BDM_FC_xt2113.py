@@ -69,5 +69,5 @@ if __name__=="__main__":
        .map(lambda x: (x[0],x[1][0],x[1][1],x[1][2],x[1][3]))
 
   head=sc.parallelize([('cbg_fips','2019-03','2019-10','2020-03','2019-10')])
-  outputFinal = head.union(D)
+  outputFinal = head.union(D).map(lambda x: ','.join(str(d) for d in x))
   outputFinal.saveAsTextFile(sys.argv[1])
