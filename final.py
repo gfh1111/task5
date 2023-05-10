@@ -61,7 +61,7 @@ if __name__=="__main__":
        .reduceByKey(lambda x,y: (x[0]+y[0],x[1]+y[1]))\
        .map(lambda x: (x[0][0],x[0][1],round(x[1][1]/x[1][0],2)))
 
-  dict = {'2019-03':' ', '2019-10':' ', '2020-03':' ', '2020-10':' '}
+  dict = {'2019-03':'', '2019-10':'', '2020-03':'', '2020-10':''}
   D = C.map(lambda x:(x[0],{x[1]:x[2]}))\
        .reduceByKey(lambda x,y: merge(x,y))\
        .map(lambda x: (x[0],merge(dict,x[1])))\
